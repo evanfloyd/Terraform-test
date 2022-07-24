@@ -14,10 +14,6 @@ variable "security_groups" {
   default = "evans_sg"
 }
 
-variable "cidr_block" {
-  default = "172.31.0.0/16"
-}
-
 variable "availability_zone" {
   default = "us-east-1c"
 }
@@ -36,4 +32,12 @@ variable "device_name" {
 
 variable "key_name" {
   default = "evans-key"
+}
+
+variable "vpc_cidr" {
+  default = "10.0.0.0/16"
+}
+
+variable "my_ip" {
+  default = "68.230.55.226/32"
 }
