@@ -37,7 +37,3 @@ variable "key_name" {
 variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
-
-variable "my_ip" {
-  default = "68.230.55.226/32"
-}

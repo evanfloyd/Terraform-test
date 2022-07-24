@@ -8,7 +8,7 @@ resource "aws_security_group_rule" "sg_rule_in" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["${var.my_ip}/32"]
+  cidr_blocks       = ["68.230.55.226/32"]
   security_group_id = aws_security_group.evans_sg.id
 }
 
