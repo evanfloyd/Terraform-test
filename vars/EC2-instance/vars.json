@@ -1,0 +1,13 @@
+{
+    "TF_VAR_ami_id": "ami-052efd3df9dad4825",
+    "TF_VAR_instance_size": "t2.micro",
+    "TF_VAR_instance_name": "evans-terraform",
+    "TF_VAR_security_groups": "evans_sg",
+    "TF_VAR_cidr_block": "172.31.0.0/16",
+    "TF_VAR_availability_zone": "us-east-1c",
+    "TF_VAR_size": "8",
+    "TF_VAR_name": "evans_volume",
+    "TF_VAR_device_name": "/dev/sdh",
+    "TF_VAR_key_name": "evans-key"    
+  }
+  

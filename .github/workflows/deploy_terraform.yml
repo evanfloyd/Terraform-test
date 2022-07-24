@@ -1,0 +1,90 @@
+name: 'Deploy Terraform Catalog Item'
+
+on:
+  workflow_dispatch:
+    inputs:
+      catalog_item_name:
+        description: "This the terraform template you want to deploy."
+        required: true
+        default: EC2-instance
+      terraform_action_type:
+        description: "terraform action type(plan,apply,destroy)"
+        required: true
+        default: plan
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ${{ matrix.os }}
+    env:
+      catalog_item_name: "${{ github.event.inputs.catalog_item_name }}"
+      terraform_action_type: "${{ github.event.inputs.terraform_action_type }}"
+
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest' ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+          architecture: 'x64'
+
+      - name: "Install Terraform"
+        shell: bash
+        run: |
+          set +x
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt install terraform -y
+          terraform version || exit 1
+
+      - name: "Load Environment Variables"
+        shell: bash
+        run: |
+          set +x
+          python library/set_vars.py
+
+      - name: "Check Terraform Argument"
+        shell: bash
+        run: |
+          set +x
+          if [[ "${terraform_action_type}" != "plan" && "${terraform_action_type}" != "apply" && "${terraform_action_type}" != "destroy" ]]; then
+              echo """
+              - Arguments:
+              - --plan
+              - --apply
+              - --destroy
+          """
+          exit 1
+          else
+              echo "Terraform will execute ${terraform_action_type}"
+          fi
+
+
+      - name: "Terraform init"
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          AWS_DEFAULT_REGION: "${{ secrets.AWS_DEFAULT_REGION }}"
+        run: |
+          set +x
+          cd terraform/${catalog_item_name}
+          terraform init
+
+      - name: "Terraform Action"
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          AWS_DEFAULT_REGION: "${{ secrets.AWS_DEFAULT_REGION }}"
+        run: |
+          set +x
+          cd terraform/${catalog_item_name}
+          if [ "${terraform_action_type}" = "apply" ] || [ "${terraform_action_type}" = "destroy" ]; then
+            terraform ${terraform_action_type} -auto-approve
+          else
+            terraform ${terraform_action_type}
+          fi
