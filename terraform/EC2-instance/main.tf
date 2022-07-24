@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
 terraform {
   required_providers {
     aws = {
@@ -13,10 +17,6 @@ terraform {
     key    = "evan/terraform.tfstate"
     region = "us-east-1"
   }
-}
-
-provider "aws" {
-  region = "us-east-1"
 }
 
 resource "aws_eip_association" "eip_assoc" {
