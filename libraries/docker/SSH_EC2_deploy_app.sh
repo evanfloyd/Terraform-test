@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 TEMP_SSH_PRIVATE_KEY_FILE='../private_key.pem'
 echo ${KEY} >> ../private_key.pem
+chmod 600 $TEMP_SSH_PRIVATE_KEY_FILE
 ssh -i $TEMP_SSH_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no ${EC2_INSTANCE_USERNAME}@${INSTANCE_DNS_NAME}
 whoami
 if [ ! -d "evans-apps" ]; then
