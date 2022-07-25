@@ -30,7 +30,7 @@ resource "aws_instance" "ec2_in" {
   key_name               = var.key_name
   vpc_security_group_ids = ["${aws_security_group.evans_sg.id}"]
   availability_zone      = var.availability_zone
-
+  subnet_id              = var.subnet_id
   user_data = file("install_docker.sh")
 
 
