@@ -47,7 +47,7 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress \
             --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
+            --protocol "-1" \
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
