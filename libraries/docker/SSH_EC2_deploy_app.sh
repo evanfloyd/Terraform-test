@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-ssh -i "${KEY}" -o StrictHostKeyChecking=no ${EC2_INSTANCE_USERNAME}@${INSTANCE_DNS_NAME}
+TEMP_SSH_PRIVATE_KEY_FILE='../private_key.pem'
+echo ${KEY} >> ../private_key.pem
+ssh -i $TEMP_SSH_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no ${EC2_INSTANCE_USERNAME}@${INSTANCE_DNS_NAME}
 whoami
 if [ ! -d "evans-apps" ]; then
   sudo git clone https://github.com/evanfloyd/evans-apps.git
