@@ -1,0 +1,51 @@
+name: 'Deploy Docker image'
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_image_tag:
+        description: The docker image tag you want to use.
+        required: true
+        default: v1.0.0
+      docker_image_name:
+        description: Specify your docker image name. This represents the folder in the repo structure.
+        required: true
+        default: magic-ball
+
+jobs:
+  deploy_docker_image:
+    name: "Deploy docker image"
+    runs-on: ${{ matrix.os }}
+    env:
+      image_tag: "${{ github.event.inputs.docker_image_tag }}"
+      image_name: "${{ github.event.inputs.docker_image_name }}"
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest' ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Set Build Persistent Variables and Dockerfile"
+        shell: bash
+        run: |
+          source libraries/utilities/set_persistent_library_path
+
+      - name: "SSH into EC2 Instance and Deploy App"
+        shell: bash
+        env:
+          key: "${{ secrets.EC2-SSH-KEY }}"
+          EC2_INSTANCE_USERNAME: "${{ secrets.EC2-INSTANCE-USERNAME }}"
+          INSTANCE_DNS_NAME: "${{ secrets.INSTANCE_DNS_NAME }}"
+        run: |
+          set +x
+          build_check_push "manifests/mysql"
+
+      - name: "Deploy to EC2 instance"
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          AWS_DEFAULT_REGION: "${{ secrets.AWS_DEFAULT_REGION }}"
+        run: |
+          set +x

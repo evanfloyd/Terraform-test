@@ -17,8 +17,3 @@ sudo systemctl start docker
 sudo apt-get install docker-compose-plugin
 sudo apt-get install docker-compose-plugin=2.6.0~ubuntu-jammy
 sudo docker network create magic-net --driver bridge
-
-
-sudo docker pull efloyd98/magic-8ball:1.0.0
-sudo docker pull bitnami/prometheus
-sudo docker pull grafana/grafana
