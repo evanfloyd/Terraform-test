@@ -19,6 +19,7 @@ jobs:
     env:
       image_tag: "${{ github.event.inputs.docker_image_tag }}"
       image_name: "${{ github.event.inputs.docker_image_name }}"
+      AWS_INSTANCE_SG_ID: "${{ secrets.SG_ID }}"
     strategy:
       matrix:
         os: [ 'ubuntu-latest' ]
