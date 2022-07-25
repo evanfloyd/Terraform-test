@@ -39,9 +39,7 @@ jobs:
         run: |
           source libraries/utilities/set_persistent_library_path
 
-      - name: get runner ip addresses
-        id: ip
-        uses: haythem/public-ip@v1.2
+
 
       - name: whitelist runner ip address
         run: |
@@ -49,7 +47,7 @@ jobs:
             --group-id $AWS_INSTANCE_SG_ID \
             --protocol "-1" \
             --port 22 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+            --cidr 0.0.0.0/0
 
       - name: "SSH into EC2 Instance and Deploy App"
         shell: bash
@@ -67,4 +65,4 @@ jobs:
             --group-id $AWS_INSTANCE_SG_ID \
             --protocol "-1" \
             --port 22 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+            --cidr 0.0.0.0/0
