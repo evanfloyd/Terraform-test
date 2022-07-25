@@ -14,7 +14,7 @@ EOF
 sudo touch evans_key.pem
 KEY='${KEY}'
 TEMP_SSH_PRIVATE_KEY_FILE='evans_key.pem'
-sudo bash -c "printf "%s" "$KEY" >$TEMP_SSH_PRIVATE_KEY_FILE"
+sudo bash -c "printf "%s" "$KEY" "\n" >$TEMP_SSH_PRIVATE_KEY_FILE"
 sudo chmod 400 $TEMP_SSH_PRIVATE_KEY_FILE
-sudo ssh -o StrictHostKeyChecking=no -i $TEMP_SSH_PRIVATE_KEY_FILE ${EC2_INSTANCE_USERNAME}@${INSTANCE_DNS_NAME} "$ssh_cmd"
+ssh -o StrictHostKeyChecking=no -i $TEMP_SSH_PRIVATE_KEY_FILE ${EC2_INSTANCE_USERNAME}@${INSTANCE_DNS_NAME} "$ssh_cmd"
 
