@@ -26,10 +26,29 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: <your-ci-aws-access-key>
+          aws-secret-access-key: <your-ci-aws-secret-key>
+          aws-region: <your-ec2-aws-region>
+
       - name: "Set Build Persistent Variables and Dockerfile"
         shell: bash
         run: |
           source libraries/utilities/set_persistent_library_path
+
+      - name: get runner ip addresses
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: whitelist runner ip address
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: "SSH into EC2 Instance and Deploy App"
         shell: bash
@@ -40,3 +59,11 @@ jobs:
         run: |
           set +x
           bash SSH_EC2_deploy_app.sh
+
+      - name: revoke runner ip address
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
